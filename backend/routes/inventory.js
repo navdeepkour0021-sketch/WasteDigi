@@ -12,7 +12,20 @@ router.use(protect);
 // @access  Private
 router.get('/', requirePermission('inventory:read'), async (req, res) => {
   try {
-    const inventory = await Inventory.find({ user: req.user._id }).sort({ createdAt: -1 });
+    let query = {};
+    
+    // If user is admin and requests all data, don't filter by user
+    if (req.user.role === 'admin' && req.query.all === 'true') {
+      // Admin can see all inventory items
+      query = {};
+    } else {
+      // Regular users and managers see only their own data
+      query = { user: req.user._id };
+    }
+    
+    const inventory = await Inventory.find(query)
+      .populate('user', 'name email')
+      .sort({ createdAt: -1 });
     res.json(inventory);
   } catch (error) {
     console.error('Get inventory error:', error);

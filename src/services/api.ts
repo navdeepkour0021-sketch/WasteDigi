@@ -60,7 +60,7 @@ export interface WasteLog {
 
 // Inventory API
 export const inventoryApi = {
-  getAll: () => api.get<InventoryItem[]>('/inventory'),
+  getAll: (includeAll = false) => api.get<InventoryItem[]>(`/inventory${includeAll ? '?all=true' : ''}`),
   create: (data: Omit<InventoryItem, '_id' | 'createdAt' | 'updatedAt' | 'status'>) => 
     api.post<InventoryItem>('/inventory', data),
   update: (id: string, data: Partial<InventoryItem>) => 
@@ -71,7 +71,7 @@ export const inventoryApi = {
 
 // Waste API
 export const wasteApi = {
-  getAll: () => api.get<WasteLog[]>('/waste'),
+  getAll: (includeAll = false) => api.get<WasteLog[]>(`/waste${includeAll ? '?all=true' : ''}`),
   create: (data: Omit<WasteLog, '_id' | 'createdAt' | 'updatedAt'>) => 
     api.post<WasteLog>('/waste', data),
   delete: (id: string) => api.delete(`/waste/${id}`),
